@@ -1,0 +1,5 @@
+﻿  Hash_Func.cpp
+C:\Users\lenovo\source\repos\Chat_c\sha1.h(77,27): warning C4018: <: несоответствие типов со знаком и без знака
+  (компиляция исходного файла "Hash_Func.cpp")
+  
+  Chat_c++.vcxproj -> C:\Users\lenovo\source\repos\Chat_c\x64\Debug\Chat_c++.exe

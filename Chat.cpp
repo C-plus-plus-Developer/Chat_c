@@ -1,11 +1,12 @@
 #include "Chat.h"
-#include <iostream>
 
+using namespace Mysha;
 void Chat::ShowHello() {
     std::cout << "Hello, I am chat" << std::endl;
 }
 
 void Chat::Login() {
+    std::string userlogin;
     int userIndex;
     std::cout << "Choice concret user" << std::endl;
     PrintUsers();
@@ -13,18 +14,19 @@ void Chat::Login() {
     std::cout << "Write user index: ";
     std::cin >> userIndex;
 
+    std::cout << "Write user login: ";
+    std::cin >> userlogin;
+
     std::cout << "Write user password: ";
     std::string pass;
     std::cin >> pass;
-
-    if (CheckPasswordByIndex(userIndex, pass)) {
+    
+    if (CheckPasswordByIndex(userlogin, pass)) {
         std::cout << "You have entered to user" << std::endl;
         currentLogin = users[userIndex];
         ShowUserMenu();
     }
-    else {
-        std::cout << "Wrong password!" << std::endl;
-    }
+    
 }
 
 void Chat::AddNewUser() {
@@ -36,17 +38,22 @@ void Chat::AddNewUser() {
     std::cout << "password: ";
     std::string newPass;
     std::cin >> newPass;
+    //хеширование пароля
+    uint* PassHash = sha1(newPass.c_str(), static_cast <uint>(newPass.size()));
 
     std::cout << "name: ";
     std::string newName;
     std::cin >> newName;
 
     User newUser;
-    newUser.login = newLogin;
-    newUser.password = newPass;
+   
     newUser.name = newName;
-
+    //сохранение хэша и логина в таблицу
+    table.add(newLogin, PassHash);
+ 
+   
     users.push_back(newUser);
+    
     std::cout << "User added successfully!" << std::endl;
 }
 
@@ -78,7 +85,7 @@ void Chat::start() {
 void Chat::PrintUsers() {
     std::cout << "All users: " << std::endl;
     for (int i = 0; i < users.size(); ++i) {
-        std::cout << i << " - " << users[i].login << std::endl;
+        std::cout << i << " - " << users[i].name << std::endl;
     }
 }
 
@@ -105,9 +112,13 @@ void Chat::ShowUserMenu() {
     }
 }
 
-bool Chat::CheckPasswordByIndex(int index, const std::string& password) {
-    if (index >= 0 && index < users.size()) {
-        return users[index].password == password;
+bool Chat::CheckPasswordByIndex(std::string userLogin, const std::string& password) {
+    
+        //проверка по хэшу от пароля
+    uint *CheckHash = sha1(password.c_str(), password.size());
+    if (table.verify(userLogin, CheckHash)) {
+        delete[] CheckHash;
+        return true;
     }
     return false;
 }

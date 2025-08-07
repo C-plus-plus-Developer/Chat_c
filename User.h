@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "Messages.h"
+#include "Hash_Func.h"
 
 class User {
 public:
@@ -10,6 +11,6 @@ public:
     std::string login;
 
     std::vector<Message> messages;
-
+   
     void PrintAllMessages();
 };

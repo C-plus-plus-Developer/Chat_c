@@ -3,9 +3,12 @@
 #include "Chat.h"
 using namespace std;
 
+
+
 int main()
 {
-    Chat chat;
-    chat.start();
+    setlocale(LC_ALL, "rus");
+   Chat chat;
+   chat.start();
 }
 
