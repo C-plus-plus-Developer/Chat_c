@@ -1,0 +1,87 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Переменная \"UserEntry::password_hash\" не инициализирована. Всегда инициализируйте переменную-член (type.6)."
+          },
+          "analysisTarget": {
+            "uri": "file:///c:/users/lenovo/source/repos/chat_c/hash_func.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/lenovo/source/repos/Chat_c/Hash_Func.h"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "UserEntry::{ctor}",
+                  "decoratedName": "??0UserEntry@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "UserEntry::password_hash"
+          }
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "MSVC Code Analysis",
+          "version": "14.44.35215.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/lenovo/source/repos/chat_c/hash_func.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "cb219fe01e51f50c6f760b89608695f998da63fd75a5df61711a788e430a31d6"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///C:/Users/lenovo/source/repos/Chat_c/Hash_Func.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "fb0dd14400da5cf1092767e336e69ea4f86fa7062f59e1ddae5c4eb99a7a2caa"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/lenovo/source/repos/chat_c/sha1.h"
+          },
+          "hashes": {
+            "sha-256": "089735e3238ba23c66d640d42a1f65fe430556a72aa5aa74ae94b36ae6730e7a"
+          }
+        }
+      ]
+    }
+  ]
+}
