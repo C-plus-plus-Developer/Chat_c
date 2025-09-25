@@ -4,13 +4,11 @@
 #include <string>
 #include <fstream>
 #include "Messages.h"
-#include "Hash_Func.h"
-
-
+#include "sha1.h"
 
 class User {
 public:
-    uint* password;
+    Mysha::uint* password;
     std::string name;
     std::string login;
     std::vector<Message> messages;

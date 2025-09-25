@@ -24,9 +24,6 @@
     <ClCompile Include="Chat.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Hash_Func.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Messages.h">
@@ -37,9 +34,6 @@
     </ClInclude>
     <ClInclude Include="Chat.h">
       <Filter>Исходные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="Hash_Func.h">
-      <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="sha1.h">
       <Filter>Файлы заголовков</Filter>

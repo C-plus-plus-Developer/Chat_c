@@ -53,6 +53,16 @@ void Chat::AddNewUser() {
     std::string newLogin;
     std::cin >> newLogin;
 
+    if (!users.empty()) {
+        for (int i = 0; i < users.size(); ++i) {
+            if (users[i].login == newLogin) {
+                cout << "Юзер с таким логином уже существует\n";
+                AddNewUser();
+                return;
+            }
+        }
+    }
+
     std::cout << "password: ";
     std::string newPass;
     std::cin >> newPass;
@@ -68,17 +78,10 @@ void Chat::AddNewUser() {
     newUser.login = newLogin;
     newUser.password = PassHash;
    
-    if (!users.empty()) {
-        for (int i = 0; i < users.size(); ++i) {
-            if (users[i].name == newName) {
-                cout << "Юзер с таким именем уже существует\n";
-                AddNewUser();
-            }
-        }
-    }
+    
     users.push_back(newUser);
     //Запись в файл User.txt нового пользователя
-    saveUsersToFile(newUser,fileUser);
+    saveUsersToFile(users,fileUser);
 
     std::cout << "User added successfully!" << std::endl;
 }
@@ -110,7 +113,6 @@ void Chat::start() {
 
 void Chat::PrintUsers() {
     std::cout << "All users: " << std::endl;
-    users = loadUsersFromFile(fileUser);
     
     for (int i = 0; i < users.size(); ++i) {
         std::cout << i << " - " << users[i].name << std::endl;
@@ -144,20 +146,17 @@ void Chat::ShowUserMenu() {
         }
     }
 }
-// доработка
+
 bool Chat::CheckPasswordByIndex(int index, const std::string& password) {
     
         //проверка по хэшу от пароля
     uint *CheckHash = sha1(password.c_str(), password.size());
+    bool match = memcmp(CheckHash, users[index].password, 20) == 0;
 
-    if (CheckHash == nullptr) std::cout << "CheckHash null\n";
-    if (users[index].password == nullptr) std::cout << "pass null\n";
-    if (memcmp(CheckHash, (unsigned char*)users[index].password, 20) == 0) {
-        delete[] CheckHash;
-        return true;
-    }
+    // Освобождаем память, занятую под вычисленный хэш
     delete[] CheckHash;
-    return false;
+
+    return match;
 }
 
 void Chat::PrivateChat() {
@@ -200,15 +199,16 @@ void Chat::PublicChat() {
     while (true) {
         std::cout << "Write to public chat: ";
         std::getline(std::cin, message.text);
-        std::cout << currentLogin.name << ": " << message.text << "\n";
-        message.from = currentLogin.name;
 
         if (message.text == "q") {
             return;
         }
-         //запись сообщений в файл 
-         publicMessage.push_back(message);
-         savePublicMessageToFile(publicMessage, filePublicMessage);
+
+        std::cout << currentLogin.name << ": " << message.text << "\n";
+        message.from = currentLogin.name;
+
+        //запись сообщений в файл
+         savePublicMessageToFile(message, filePublicMessage);
            
     }
 
@@ -220,7 +220,7 @@ void Chat::PrintPublicMessage() {
         std::cout << publicMessage[i].from << ": " << publicMessage[i].text << "\n";
     }
 }
-
+/*
 void Chat::loadDataFromFile() {
     users = loadUsersFromFile(fileUser);
     publicMessage = loadPublicMessageFromFile(filePublicMessage);
@@ -228,24 +228,21 @@ void Chat::loadDataFromFile() {
         
     }
 }
+*/
 
-std::vector<Message> Chat::loadPublicMessageFromFile(const std::string& filename) {
-    std::vector<Message> mess;
-    std::ifstream file(filename);
+void Chat::savePrivateMessageToFile(const std::vector<Message>& mess, const std::string& filename) {
+    std::ofstream file(filename, std::ios::app);
     if (!file.is_open()) {
         std::cout << "Ошибка при открытии файла с сообщениями" << filename << std::endl;
-        return mess;
+        return;
     }
 
-    Message messages;
-    while (file >> messages.from >> messages.to >> messages.text) {
-        mess.push_back(messages);
+    for (const auto& messages : mess) {
+        file << messages.from << " " << messages.to << messages.text << std::endl;
     }
 
     file.close();
-    return mess;
 }
-
 
 std::vector<Message> Chat::loadPrivateMessageFromFile(const std::string& filename) {
     std::vector<Message> mess;
@@ -264,58 +261,76 @@ std::vector<Message> Chat::loadPrivateMessageFromFile(const std::string& filenam
     return mess;
 }
 
-void Chat::savePrivateMessageToFile(const std::vector<Message>& mess, const std::string& filename) {
-    std::ofstream file(filename);
-    if (!file.is_open()) {
-        std::cout << "Ошибка при открытии файла с сообщениями" << filename << std::endl;
-        return;
-    }
 
-    for (const auto& messages : mess) {
-        file << messages.from << " " << messages.to << messages.text << std::endl;
-    }
-
-    file.close();
-}
-void Chat::saveUsersToFile(User user, const std::string& filename) {
-    std::ofstream file(filename);
+//работа с файлом Uers.txt
+void Chat::saveUsersToFile(const std::vector<User>& users, const std::string& filename) {
+    std::ofstream file(filename, std::ios::trunc | std::ios::binary); // Truncate existing file
     if (!file.is_open()) {
         std::cerr << "Ошибка открытия файла для записи пользователей." << std::endl;
         return;
     }
 
-    file << user.name << ", " << user.login <<", " << user.password << "\n";
+    for (const auto& user : users) {
+        file.write(user.name.c_str(), user.name.size() + 1); // write null terminated string
+        file.write(user.login.c_str(), user.login.size() + 1);
+        file.write(reinterpret_cast<const char*>(user.password), 20); // Write raw bytes of hash
+    }
 
     file.close();
 }
-
 std::vector<User> Chat::loadUsersFromFile(const std::string& filename) {
     std::vector<User> users;
-    std::ifstream file(filename);
+    std::ifstream file(filename, std::ios::binary);
     if (!file.is_open()) {
         std::cout << "Ошибка при открытии файла с юзерами" << filename << std::endl;
         return users;
     }
 
-    User user;
-    while (file >> user.name >> user.login) {
+    while (file.peek() != EOF) {
+        User user;
+        char buffer[256];
+        file.read(buffer, sizeof(buffer)); // Read null-terminated strings
+        user.name = buffer;
+        file.read(buffer, sizeof(buffer));
+        user.login = buffer;
+        uint passwordHash[5]; // assuming 5 elements as per your example
+        file.read(reinterpret_cast<char*>(passwordHash), 20); // read raw hash bytes
+        user.password = new uint[5]{ passwordHash[0], passwordHash[1], passwordHash[2], passwordHash[3], passwordHash[4] };
         users.push_back(user);
     }
 
     file.close();
     return users;
 }
+//Работа с файлом publicMessage.txt
 
-void Chat::savePublicMessageToFile(const std::vector<Message>& mess, const std::string& filename) {
-    std::ofstream file(filename);
+
+void Chat::savePublicMessageToFile(Message mess, const std::string& filename) {
+    std::ofstream file(filename, std::ios::app);
     if (!file.is_open()) {
         std::cout << "Ошибка при открытии файла с сообщениями" << filename << std::endl;
         return;
     }
 
-    for (const auto& messages : mess) {
-        file << messages.from << " " << messages.to << messages.text << std::endl;
+     file << mess.from << " "  << mess.text << std::endl;
+    
+
+    file.close();
+}
+
+std::vector<Message> Chat::loadPublicMessageFromFile(const std::string& filename) {
+    std::vector<Message> mess;
+    std::ifstream file(filename, std::ios::app);
+    if (!file.is_open()) {
+        std::cout << "Ошибка при открытии файла с сообщениями" << filename << std::endl;
+        return mess;
+    }
+
+    Message messages;
+    while (file >> messages.from >> messages.text) {
+        mess.push_back(messages);
     }
 
     file.close();
+    return mess;
 }

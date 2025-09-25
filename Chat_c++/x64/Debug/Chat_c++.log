@@ -2,5 +2,5 @@
 C:\Users\lenovo\source\repos\Chat_c\sha1.h(77,27): warning C4018: <: несоответствие типов со знаком и без знака
   (компиляция исходного файла "Chat.cpp")
   
-C:\Users\lenovo\source\repos\Chat_c\Chat.cpp(151,59): warning C4267: аргумент: преобразование из "size_t" в "Mysha::uint"; возможна потеря данных
+C:\Users\lenovo\source\repos\Chat_c\Chat.cpp(153,59): warning C4267: аргумент: преобразование из "size_t" в "Mysha::uint"; возможна потеря данных
   Chat_c++.vcxproj -> C:\Users\lenovo\source\repos\Chat_c\x64\Debug\Chat_c++.exe

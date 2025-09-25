@@ -129,12 +129,10 @@
   <ItemGroup>
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="Chat_c++.cpp" />
-    <ClCompile Include="Hash_Func.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chat.h" />
-    <ClInclude Include="Hash_Func.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="sha1.h" />
     <ClInclude Include="User.h" />
