@@ -5,19 +5,24 @@
 #include <fstream>
 #include "Messages.h"
 #include "sha1.h"
+#include <sstream>
 
-class User {
-public:
+struct User {
+   
     Mysha::uint* password;
     std::string name;
     std::string login;
-    std::vector<Message> messages;
-
-    inline friend std::ostream& operator<<(std::ostream& os, const User& user) {
-        os << "Username: " << user.name << ", Login: " << user.login;
-        return os;
-    }
-    void PrintAllMessage();
     
+    std::string end = " /end.\n";
+    std::string two = "#: ";
+
+    std::string filePrivateMessage;
+    
+    std::vector<Message> privateMessages;
+   
+    //Чтение из файла приватных сообщений
+   
+    //void PrintPrivateMessage();
+   
 };
 
